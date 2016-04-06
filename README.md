@@ -1,5 +1,5 @@
 # SimpleDriveDetector
-## How use?
+## How to use?
 ```
     class Program
     {
