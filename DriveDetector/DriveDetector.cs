@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
 using DriveDetector.Models;
 using DriveDetector.Models.Enums;
 
@@ -18,9 +14,13 @@ namespace DriveDetector
 
         public delegate void DriveArrivedEventHandler(object sender, VolumeChangeEventArgs e);
         public delegate void DriveRemovedEventHandler(object sender, VolumeChangeEventArgs e);
+        public delegate void DriveConfirurationChangedEventHandler(object sender, VolumeChangeEventArgs e);
+        public delegate void DriveDockingEventHandler(object sender, VolumeChangeEventArgs e);
 
         public event DriveArrivedEventHandler DriveArrivedEvent;
         public event DriveRemovedEventHandler DriveRemovedEvent;
+        public event DriveConfirurationChangedEventHandler DriveConfigurationChangedEvent;
+        public event DriveDockingEventHandler DriveDockingEvent;
 
 
         public void Start()
@@ -38,7 +38,11 @@ namespace DriveDetector
             switch (eventAgrs.EventType)
             {
                 case EventType.ConfigurationChanged:
-                    throw new NotImplementedException();
+                    DriveConfirurationChangedEventHandler confirurationChangedHandler = DriveConfigurationChangedEvent;
+                    if (confirurationChangedHandler != null)
+                    {
+                        confirurationChangedHandler(this, eventAgrs);
+                    }
                     break;
                 case EventType.DeviceArrival:
                     DriveArrivedEventHandler arrivedHandler = DriveArrivedEvent;
@@ -55,7 +59,11 @@ namespace DriveDetector
                     }
                     break;
                 case EventType.Docking:
-                    throw new NotImplementedException();
+                    DriveDockingEventHandler dockingHandler = DriveDockingEvent;
+                    if (dockingHandler != null)
+                    {
+                        dockingHandler(this, eventAgrs);
+                    }
                     break;
                 default:
                     //TODO write own exception
