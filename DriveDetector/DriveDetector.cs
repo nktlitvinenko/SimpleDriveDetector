@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Management;
+using DriveDetector.Exceptions;
 using DriveDetector.Models;
 using DriveDetector.Models.Enums;
 
@@ -66,17 +66,18 @@ namespace DriveDetector
                     }
                     break;
                 default:
-                    //TODO write own exception
-                    throw new Exception("Undefined EventType");
+                    throw new UndefinedEventTypeException("Undefined event type was handled by DriveDetector");
                     break;
             }
         }
 
         private VolumeChangeEventArgs ConvertEventArrivedEventArgsToVolumeChangeEventArgs(EventArrivedEventArgs e)
         {
-            VolumeChangeEventArgs resVolumeChangeEventArgs = new VolumeChangeEventArgs();
-            resVolumeChangeEventArgs.DriveName = e.NewEvent.Properties["DriveName"].Value.ToString();
-            Debug.WriteLine(e.NewEvent.Properties["DriveName"].Value.GetType());
+            VolumeChangeEventArgs resVolumeChangeEventArgs = new VolumeChangeEventArgs
+            {
+                DriveName = e.NewEvent.Properties["DriveName"].Value.ToString(),
+                TimeCreated = new DateTime(Int64.Parse(e.NewEvent.Properties["TIME_CREATED"].Value.ToString()))
+            };
             switch (Int32.Parse(e.NewEvent.Properties["EventType"].Value.ToString()))
             {
                 case 1:
@@ -95,8 +96,6 @@ namespace DriveDetector
                     resVolumeChangeEventArgs.EventType = EventType.Undefined;
                     break;
             }
-            resVolumeChangeEventArgs.TimeCreated = 
-                new DateTime(Int64.Parse(e.NewEvent.Properties["TIME_CREATED"].Value.ToString()));
 
             return resVolumeChangeEventArgs;
         }
