@@ -14,6 +14,9 @@
             d.Start();
 
             Console.ReadKey();
+            
+            //Stop drive detecting
+            d.Start();
         }
 
         private static void DOnDriveArrivedEvent(object sender, VolumeChangeEventArgs volumeChangeEventArgs)
