@@ -10,7 +10,7 @@ namespace DriveDetector
     {
         private readonly ManagementEventWatcher _watcher = new ManagementEventWatcher();
         private readonly WqlEventQuery _query = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent");
-
+        private EventArrivedEventHandler _eventArrivedEventHandler;
 
         public delegate void DriveArrivedEventHandler(object sender, VolumeChangeEventArgs e);
         public delegate void DriveRemovedEventHandler(object sender, VolumeChangeEventArgs e);
@@ -25,7 +25,8 @@ namespace DriveDetector
 
         public void Start()
         {
-            _watcher.EventArrived += new EventArrivedEventHandler(Watcher_DriveChangedEvent);
+            _eventArrivedEventHandler = new EventArrivedEventHandler(Watcher_DriveChangedEvent);
+            _watcher.EventArrived += _eventArrivedEventHandler;
             _watcher.Query = _query;
             _watcher.Start();
             _watcher.WaitForNextEvent();
@@ -98,6 +99,11 @@ namespace DriveDetector
             }
 
             return resVolumeChangeEventArgs;
+        }
+
+        public void Stop()
+        {
+            _watcher.EventArrived -= _eventArrivedEventHandler;
         }
     }
 }

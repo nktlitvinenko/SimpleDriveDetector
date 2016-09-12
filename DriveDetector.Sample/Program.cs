@@ -16,8 +16,11 @@ namespace DriveDetector.Sample
             d.DriveDockingEvent +=DOnDriveDockingEvent;
             //Start drive detecting
             d.Start();
-
+            
             Console.ReadKey();
+
+            //Stop drive detecting
+            d.Stop();
         }
 
         private static void DOnDriveDockingEvent(object sender, VolumeChangeEventArgs volumeChangeEventArgs)
